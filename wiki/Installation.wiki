@@ -5,12 +5,23 @@
 
 Before you install LegStar for PDI, make sure you are running with a [http://www.oracle.com/technetwork/java/javase/downloads/index.html JDK or an international version of the JRE]. See [http://code.google.com/p/legstar/issues/detail?id=98 this link] for more info.
 
-LegStar for PDI requires the PDI version 4.0.1 or later release. You can download PDI from [http://sourceforge.net/projects/pentaho/files/Data%20Integration/ this link].
+LegStar for PDI requires [http://sourceforge.net/projects/pentaho/files/Data%20Integration/ PDI version 4.0.1] or later release.
 
+For the rest of this document, we refer to the folder where you installed PDI as $KETTLE_DIR.
 
-= Details =
+= Download =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+Download the latest LegStar for PDI release from [http://code.google.com/p/legstar-pdi/downloads this link].
+
+Unzip the archive to $KETTLE_DIR/plugins/steps. This should create a folder named legstar.pdi.zosfile under $KETTLE_DIR/plugins/steps.
+
+= Check =
+
+Start or restart the PDI spoon UI ($KETTLE_DIR/spoon.sh or %KETTLE_DIR%/spoon.bat).
+
+Create a new PDI Transformation. You should now have a Design tab with all the available steps.
+
+Open the Input category and drag/drop the *z/OS File Input* step onto the canvas.
+
+Congratulations, LegStar for PDI is now installed.
+
