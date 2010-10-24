@@ -86,15 +86,15 @@ At this stage, it is a good idea to click the preview button. This should popup 
 
 http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-previewsize-scr.png
 
-Once you select the number of lines you would like to see, you should get your first glimpse à the transformed mainframe data:
+Once you select the number of lines you would like to see, you should get your first glimpse at the transformed mainframe data:
 
 http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-previewresult-scr.png
 
-It is now time to turn to Excel Output step where we need to decide the location of the output Excel worksheet:
+It is now time to turn to the Excel Output step where we need to decide the location of the output Excel worksheet:
 
 http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-exceloutput-scr.png
 
-Probablement a good time to save the transformation.
+Probably a good time to save the transformation.
 
 = Run the transformation =
 
@@ -102,7 +102,7 @@ You can run the transformation directly or in debug mode. On this dialog simply 
 
 http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-launch-scr.png
 
-Upon return, the metrics should display teh number of rows read from the z/OS file and written to the Excel worksheet:
+Upon return, the metrics should display the number of rows produced (written) by the z/OS file and read by the Excel step to be finally written to the worksheet:
 
 http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-launchmetrics-scr.png
 
@@ -119,5 +119,5 @@ These files were created on z/OS using a [http://code.google.com/p/legstar-pdi/s
 
 The file records are variable length. The ZOS.TCOBWVB.bin file was received with a simple FTP in binary mode. 
 
-The second one, ZOS.TCOBWVB.RDW.bin was also obtained using FTP but the special FTP command: *quote SITE RDW* was issued before the binary receive. This commande preserves the Record Descriptor Words (RDW) which are 4 bytes that z/OS prepends to variable records. The RDW contains the record actual length.
+The second one, ZOS.TCOBWVB.RDW.bin was also obtained using FTP but the special FTP command: *quote SITE RDW* was issued before the binary receive. This command preserves the Record Descriptor Words (RDW) which is a 4 bytes header that z/OS prepends to variable records. The RDW contains the record actual length.
  
