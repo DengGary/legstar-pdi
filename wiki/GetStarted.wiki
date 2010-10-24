@@ -1,14 +1,123 @@
-#summary One-sentence summary of this page.
+#summary Get started with LegStar for PDI.
 #labels Featured,Phase-Support
 
 = Introduction =
 
-Add your content here.
+We are going to create a PDI Transformation using 2 steps:
+
+ * The z/OS File Input which will read raw binary data from a file received from a mainframe
+ 
+ * The Excel Output step which will create an excel worksheet with the transformed data
+
+= Preliminary step =
+
+Get the mainframe binary file samples from [http://legstar-pdi.googlecode.com/svn/trunk/legstar.pdi.sample.tcobwvb/src/main/files this link]. Copy these files to your machine in a location of your choice.
+
+This is the COBOL structure that describes a record:
+{{{
+       01  CUSTOMER-DATA.
+           05 CUSTOMER-ID             PIC 9(6).
+           05 PERSONAL-DATA.
+              10 CUSTOMER-NAME        PIC X(20).
+              10 CUSTOMER-ADDRESS     PIC X(20).
+              10 CUSTOMER-PHONE       PIC X(8).
+           05 TRANSACTIONS.
+              10 TRANSACTION-NBR      PIC 9(9) COMP.
+              10 TRANSACTION OCCURS 0 TO 5
+                 DEPENDING ON TRANSACTION-NBR.
+                 15 TRANSACTION-DATE         PIC X(8).
+                 15 FILLER REDEFINES TRANSACTION-DATE.
+                    20 TRANSACTION-DAY       PIC X(2).
+                    20 FILLER                PIC X.
+                    20 TRANSACTION-MONTH     PIC X(2).
+                    20 FILLER                PIC X.
+                    20 TRANSACTION-YEAR      PIC X(2).
+                 15 TRANSACTION-AMOUNT       PIC S9(13)V99 COMP-3.
+                 15 TRANSACTION-COMMENT      PIC X(9).
+
+}}}
+As you can see such a structure would be pretty tricky to handle in PDI without LegStar's help.
+
+In this document, we will be using sample LegStar Transformers that were generated for this COBOL structure. These Transformer samples are bundled with the LegStar for PDI distribution.
+
+= Create a Transformation =
+
+Start or restart the PDI spoon UI ($KETTLE_DIR/spoon.sh or %KETTLE_DIR%/spoon.bat).
+
+Drag/Drop the *z/OS File Input* step from the Input category and the *Excel Output* step from the Output category.
+
+Create a hop between these steps. You should now have a screen looking like this:
+
+http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-stepsandhop-scr.png
+
+= Setup the z/OS File Input step =
+
+Double click on the z/OS File Input step to bring up the setup dialog:
+
+http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-setupinitial-scr.png
+
+You can change the step name if you like.
+
+The COBOL-annotated JAXB classes are LegStar Transformer classes for the COBOL copybook that describes the mainframe file records. If you click on the browse button next to this field, you will get a list of such classes that are already deployed:
+
+http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-selectjaxbclass-scr.png
+
+In our case, we select CustomerData which correspond to the CUSTOMER-DATA COBOL structure.
+
+Back from this dialog, you will notice that list of fields was populated:
+
+http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-showfields-scr.png
+
+LegStar for PDI makes a number of inferences based on the COBOL data item types on one hand and the PDI constraints on the other. One important PDI constraint is that data must fit the row model (in the sense of a table row) in order to move from step to step. Hierarchical structures have therefore to be flattened, arrays are not directly supported, etc.
+
+The next parameter we will be seting in the host character set. The default IBM01140 character set is for US english EBCDIC. Your own mainframe can very well be setup for a different EBCDIC character set such as IBM1147 for France:
+
+http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-hostcharset-scr.png
+
+The character sets listed are taken directly from your java VM. If you don't see any IBMxxx character sets listed, you need to get a JDK of and international version of the JRE.
+
+We now need to tell the step where the z/OS file resides. You can use the browse button to locate the files you downloaded in the preliminary step.
+
+You must also check the "Variable Length" option and, depending on your choice, also check the RDW option. 
+
+http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-filelocation-scr.png
+
+At this stage, it is a good idea to click the preview button. This should popup this dialog:
+
+http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-previewsize-scr.png
+
+Once you select the number of lines you would like to see, you should get your first glimpse à the transformed mainframe data:
+
+http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-previewresult-scr.png
+
+It is now time to turn to Excel Output step where we need to decide the location of the output Excel worksheet:
+
+http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-exceloutput-scr.png
+
+Probablement a good time to save the transformation.
+
+= Run the transformation =
+
+You can run the transformation directly or in debug mode. On this dialog simply click launch:
+
+http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-launch-scr.png
+
+Upon return, the metrics should display teh number of rows read from the z/OS file and written to the Excel worksheet:
+
+http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-launchmetrics-scr.png
+
+Finally, if you open the excel worksheet that you produced, you should get something like this:
+
+http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-excelworksheet-scr.png
 
 
-= Details =
+= Additional info for the curious =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+== How the sample z/OS files were created ==
+
+These files were created on z/OS using a [http://code.google.com/p/legstar-pdi/source/browse/trunk/legstar.pdi.sample.tcobwvb/src/main/cobol/TCOBWVB.cbl COBOL program called TCOBWVB].
+
+The file records are variable length. The ZOS.TCOBWVB.bin file was received with a simple FTP in binary mode. 
+
+The second one, ZOS.TCOBWVB.RDW.bin was also obtained using FTP but the special FTP command: *quote SITE RDW* was issued before the binary receive. This commande preserves the Record Descriptor Words (RDW) which are 4 bytes that z/OS prepends to variable records. The RDW contains the record actual length.
+ 

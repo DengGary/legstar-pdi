@@ -5,15 +5,17 @@
 
 Before you install LegStar for PDI, make sure you are running with a [http://www.oracle.com/technetwork/java/javase/downloads/index.html JDK or an international version of the JRE]. See [http://code.google.com/p/legstar/issues/detail?id=98 this link] for more info.
 
+LegStar for PDI does not (yet) include the [http://www.legsem.com/legstar/legstar-coxbgen/index.html LegStar Transformers Generator] that you will need to create your own Transformers. We recommmend you install the Eclipse version of this generator.
+
 LegStar for PDI requires [http://sourceforge.net/projects/pentaho/files/Data%20Integration/ PDI version 4.0.1] or later release.
 
 For the rest of this document, we refer to the folder where you installed PDI as $KETTLE_DIR.
 
-= Download =
+= Download/Unzip =
 
 Download the latest LegStar for PDI release from [http://code.google.com/p/legstar-pdi/downloads this link].
 
-Unzip the archive to $KETTLE_DIR/plugins/steps. This should create a folder named legstar.pdi.zosfile under $KETTLE_DIR/plugins/steps.
+Unzip the archive to $KETTLE_DIR/plugins/steps. This should create a folder named *legstar.pdi.zosfile* under $KETTLE_DIR/plugins/steps.
 
 = Check =
 
