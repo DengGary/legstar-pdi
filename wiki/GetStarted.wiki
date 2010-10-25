@@ -3,17 +3,21 @@
 
 = Introduction =
 
-We are going to create a PDI Transformation using 2 steps:
+This document guides you through the process of creating a PDI Transformation with 2 steps:
 
- * The z/OS File Input which will read raw binary data from a file received from a mainframe
+ * The *z/OS File Input* step which will read raw binary data from a file received from a mainframe
  
- * The Excel Output step which will create an excel worksheet with the transformed data
+ * The *Excel Output* step which will create an excel worksheet with the transformed data
 
-= Preliminary step =
+= Preliminary task =
 
 Get the mainframe binary file samples from [http://legstar-pdi.googlecode.com/svn/trunk/legstar.pdi.sample.tcobwvb/src/main/files this link]. Copy these files to your machine in a location of your choice.
 
-This is the COBOL structure that describes a record:
+These file records are variable length.
+
+The content of these 2 files is identical.  The only difference is that the one with suffix RDW contains record descriptor words, while the other one doesn't.
+
+This is the COBOL structure that describes records in these files:
 {{{
        01  CUSTOMER-DATA.
            05 CUSTOMER-ID             PIC 9(6).
@@ -38,13 +42,13 @@ This is the COBOL structure that describes a record:
 }}}
 As you can see such a structure would be pretty tricky to handle in PDI without LegStar's help.
 
-In this document, we will be using sample LegStar Transformers that were generated for this COBOL structure. These Transformer samples are bundled with the LegStar for PDI distribution.
+In this document, we will be using sample [http://www.legsem.com/legstar/legstar-coxbgen/index.html LegStar Transformers] that were generated for this COBOL structure. These Transformer samples are bundled with the LegStar for PDI distribution.
 
-= Create a Transformation =
+= Create a PDI Transformation =
 
 Start or restart the PDI spoon UI ($KETTLE_DIR/spoon.sh or %KETTLE_DIR%/spoon.bat).
 
-Drag/Drop the *z/OS File Input* step from the Input category and the *Excel Output* step from the Output category.
+Drag/Drop the *z/OS File Input* step from the Input category and the *Excel Output* step from the Output category onto the canvas.
 
 Create a hop between these steps. You should now have a screen looking like this:
 
@@ -58,27 +62,31 @@ http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-setupinitial-scr.pn
 
 You can change the step name if you like.
 
-The COBOL-annotated JAXB classes are LegStar Transformer classes for the COBOL copybook that describes the mainframe file records. If you click on the browse button next to this field, you will get a list of such classes that are already deployed:
+The COBOL-annotated JAXB classes are LegStar Transformer classes for the COBOL copybook that describes the mainframe file records. If you click on the browse button next to this field, you will get a list of such classes. 
+
+The classes that you see listed are the samples that were intalled. Later, when you generate your own LegStar Transformers, they will appear in this list provided you package your Transformers as jar files and deploy them to *$KETTLE_DIR/plugins/steps/legstar.pdi.zosfile/lib*.
 
 http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-selectjaxbclass-scr.png
 
-In our case, we select CustomerData which correspond to the CUSTOMER-DATA COBOL structure.
+In our case, we select CustomerData which corresponds to the CUSTOMER-DATA COBOL structure.
 
-Back from this dialog, you will notice that list of fields was populated:
+Back from this dialog, you will notice that a list of fields was automatically populated. Each field corresponds to an elementary data item from the corresponding COBOL structure:
 
 http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-showfields-scr.png
 
-LegStar for PDI makes a number of inferences based on the COBOL data item types on one hand and the PDI constraints on the other. One important PDI constraint is that data must fit the row model (in the sense of a table row) in order to move from step to step. Hierarchical structures have therefore to be flattened, arrays are not directly supported, etc.
+LegStar for PDI makes a number of inferences based on the COBOL data item types and the PDI constraints. One important PDI constraint is that data must fit the row model (in the sense of a table row) in order to move from step to step. Hierarchical structures, such as COBOL structures, have therefore to be flattened, arrays are not directly supported, etc.
 
-The next parameter we will be seting in the host character set. The default IBM01140 character set is for US english EBCDIC. Your own mainframe can very well be setup for a different EBCDIC character set such as IBM1147 for France:
+The next parameter we will be setting is the host character set. The default IBM01140 character set is for US english EBCDIC. Your own mainframe might be setup for a different EBCDIC character set such as IBM1147 for France:
 
 http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-hostcharset-scr.png
 
-The character sets listed are taken directly from your java VM. If you don't see any IBMxxx character sets listed, you need to get a JDK of and international version of the JRE.
+The character sets listed are taken directly from your java VM. If you don't see any IBMxxx character sets listed, you need to get a JDK or an international version of the JRE.
 
 We now need to tell the step where the z/OS file resides. You can use the browse button to locate the files you downloaded in the preliminary step.
 
-You must also check the "Variable Length" option and, depending on your choice, also check the RDW option. 
+You must also check the "Variable Length" option.
+
+You have 2 sample files. One where records start with a 4 bytes record descriptor word and the second one without such an RDW. Check the RDW option depending on the file you selected. 
 
 http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-filelocation-scr.png
 
@@ -94,15 +102,15 @@ It is now time to turn to the Excel Output step where we need to decide the loca
 
 http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-exceloutput-scr.png
 
-Probably a good time to save the transformation.
+Probably a good time to save the PDI transformation.
 
-= Run the transformation =
+= Run the PDI transformation =
 
 You can run the transformation directly or in debug mode. On this dialog simply click launch:
 
 http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-launch-scr.png
 
-Upon return, the metrics should display the number of rows produced (written) by the z/OS file and read by the Excel step to be finally written to the worksheet:
+Upon return, the metrics should display the number of rows produced (written) by the z/OS File Input step and read by the Excel Output step to be finally written to the worksheet:
 
 http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-launchmetrics-scr.png
 
@@ -115,9 +123,9 @@ http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-excelworksheet-scr.
 
 == How the sample z/OS files were created ==
 
-These files were created on z/OS using a [http://code.google.com/p/legstar-pdi/source/browse/trunk/legstar.pdi.sample.tcobwvb/src/main/cobol/TCOBWVB.cbl COBOL program called TCOBWVB].
+These files were created on z/OS using a COBOL batch program called [http://code.google.com/p/legstar-pdi/source/browse/trunk/legstar.pdi.sample.tcobwvb/src/main/cobol/TCOBWVB.cbl TCOBWVB].
 
-The file records are variable length. The ZOS.TCOBWVB.bin file was received with a simple FTP in binary mode. 
+The ZOS.TCOBWVB.bin file was received with a simple FTP in binary mode. 
 
 The second one, ZOS.TCOBWVB.RDW.bin was also obtained using FTP but the special FTP command: *quote SITE RDW* was issued before the binary receive. This command preserves the Record Descriptor Words (RDW) which is a 4 bytes header that z/OS prepends to variable records. The RDW contains the record actual length.
  
