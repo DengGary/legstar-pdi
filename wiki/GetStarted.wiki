@@ -54,7 +54,7 @@ Create a hop between these steps. You should now have a screen looking like this
 
 http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-stepsandhop-scr.png
 
-= Setup the z/OS File Input step =
+= Setup the PDI steps =
 
 Double click on the z/OS File Input step to bring up the setup dialog:
 
