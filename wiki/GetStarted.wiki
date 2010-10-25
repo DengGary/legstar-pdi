@@ -6,7 +6,7 @@
 This document guides you through the process of creating a PDI Transformation with 2 steps:
 
  * The *z/OS File Input* step which will read raw binary data from a file received from a mainframe
- 
+
  * The *Excel Output* step which will create an excel worksheet with the transformed data
 
 = Preliminary task =
@@ -62,7 +62,7 @@ http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-setupinitial-scr.pn
 
 You can change the step name if you like.
 
-The COBOL-annotated JAXB classes are LegStar Transformer classes for the COBOL copybook that describes the mainframe file records. If you click on the browse button next to this field, you will get a list of such classes. 
+The COBOL-annotated JAXB classes are LegStar Transformer classes for the COBOL copybook that describes the mainframe file records. If you click on the browse button next to this field, you will get a list of such classes.
 
 The classes that you see listed are the samples that were intalled. Later, when you generate your own LegStar Transformers, they will appear in this list provided you package your Transformers as jar files and deploy them to *$KETTLE_DIR/plugins/steps/legstar.pdi.zosfile/lib*.
 
@@ -86,7 +86,7 @@ We now need to tell the step where the z/OS file resides. You can use the browse
 
 You must also check the "Variable Length" option.
 
-You have 2 sample files. One where records start with a 4 bytes record descriptor word and the second one without such an RDW. Check the RDW option depending on the file you selected. 
+You have 2 sample files. One where records start with a 4 bytes record descriptor word and the second one without such an RDW. Check the RDW option depending on the file you selected.
 
 http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-filelocation-scr.png
 
@@ -125,7 +125,16 @@ http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-excelworksheet-scr.
 
 These files were created on z/OS using a COBOL batch program called [http://code.google.com/p/legstar-pdi/source/browse/trunk/legstar.pdi.sample.tcobwvb/src/main/cobol/TCOBWVB.cbl TCOBWVB].
 
-The ZOS.TCOBWVB.bin file was received with a simple FTP in binary mode. 
+The JCL used to produce the sequential file looks like this:
+{{{
+//RUN  EXEC PGM=TCOBWVB,REGION=1024K
+//STEPLIB  DD DSN=P390.DEV.LOAD,DISP=SHR
+//SYSPRINT DD SYSOUT=*
+//OUTFILE  DD DISP=(MOD,CATLG,DELETE),DSN=P390.DEV.TCOBWVB,
+//           SPACE=(TRK,(45,15)),UNIT=3390,
+//           DCB=(BLKSIZE=374,LRECL=187,RECFM=VB)
+}}}
+
+The ZOS.TCOBWVB.bin file was received with a simple FTP in binary mode.
 
 The second one, ZOS.TCOBWVB.RDW.bin was also obtained using FTP but the special FTP command: *quote SITE RDW* was issued before the binary receive. This command preserves the Record Descriptor Words (RDW) which is a 4 bytes header that z/OS prepends to variable records. The RDW contains the record actual length.
- 
