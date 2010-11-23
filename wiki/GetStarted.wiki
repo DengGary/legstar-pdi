@@ -73,7 +73,7 @@ You can change the step name if you like.
 
 == Locate the z/OS input file ==
 
-We need to tell the step where the z/OS file resides. You can use the browse button to locate the files you downloaded in the preliminary step.
+We need to tell the step where the z/OS file resides. You can use the browse button to locate the files you downloaded in the [#Preliminary_task preliminary step].
 
 You must also check the "Variable Length" option.
 
@@ -97,7 +97,7 @@ Here we will select the COBOL structure that describes the z/OS file records.
 
 The *Import COBOL* button allows you to pick up COBOL source code from you file system.
 
-Alternatively, you can copy/paste the code. Just select all the lines from the COBOL structure we saw previously and paste it to the text box.
+Alternatively, you can copy/paste the code. Just select all the lines from the [#Preliminary_task COBOL structure we saw previously] and paste it to the text box.
 
 By default, COBOL code is assumed to be fixed format which means it should start after column 7 and not extend past column 72. We will see later how you can customize legstar-pdi to accept free format COBOL.
 
