@@ -73,7 +73,7 @@ You can change the step name if you like.
 
 == Locate the z/OS input file ==
 
-We need to tell the step where the z/OS file resides. You can use the browse button to locate the files you downloaded in the [http://legstar-pdi.googlecode.com/svn/trunk/legstar.pdi.zosfile/src/main/file preliminary step].
+We need to tell the step where the z/OS file resides. You can use the browse button to locate the files you [http://legstar-pdi.googlecode.com/svn/trunk/legstar.pdi.zosfile/src/main/file downloaded] in the preliminary step.
 
 You must also check the "Variable Length" option.
 
