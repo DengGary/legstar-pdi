@@ -3,9 +3,11 @@
 
 = Pre-requisites =
 
-Before you install LegStar for PDI, make sure you are running with a [http://www.oracle.com/technetwork/java/javase/downloads/index.html JDK or an international version of the JRE]. See [http://code.google.com/p/legstar/issues/detail?id=98 this link] for more info.
+Before you install LegStar for PDI, make sure you are running with a [http://www.oracle.com/technetwork/java/javase/downloads/index.html JDK].
 
-LegStar for PDI does not (yet) include the [http://www.legsem.com/legstar/legstar-coxbgen/index.html LegStar Transformers Generator]. It is not necessary if you only want to [GetStarted evaluate LegStar for PDI] using the samples delivered. You will need it to create your own Transformers though. We recommmend you install the [http://www.legsem.com/legstar/legstar-common-plugin/index.html Eclipse version of the LegStar generators].
+To make sure, run command: _javac -version_ from a command prompt. You should get something similar to: _javac 1.6.0_16_.
+
+LegStar for PDI requires JDK 1.5 or above.
 
 LegStar for PDI requires [http://sourceforge.net/projects/pentaho/files/Data%20Integration/ PDI version 4.0.1] or later release.
 

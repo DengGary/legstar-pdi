@@ -11,11 +11,13 @@ This document guides you through the process of creating a PDI Transformation wi
 
 = Preliminary task =
 
-Get the mainframe binary file samples from [http://legstar-pdi.googlecode.com/svn/trunk/legstar.pdi.sample.tcobwvb/src/main/files this link]. Copy these files to your machine in a location of your choice.
+Get the mainframe binary file samples from [http://legstar-pdi.googlecode.com/svn/trunk/legstar.pdi.zosfile/src/main/file this link]. Copy these files to your machine at a location of your choice.
 
 These file records are variable length.
 
-The content of these 2 files is identical.  The only difference is that the one with suffix RDW contains record descriptor words, while the other one doesn't.
+The content of these 2 files is almost identical. The only difference is that the one with suffix RDW contains record descriptor words, while the other one doesn't. Processing variable record files with RDW is faster but LegStar can handle both types.
+
+See How_the_sample_z/OS_files_were_created for information on how these files were produced. Observe that there are no conversions performed on the mainframe. These files are binary images of mainframe files, obtained via FTP.
 
 This is the COBOL structure that describes records in these files:
 {{{
@@ -40,9 +42,16 @@ This is the COBOL structure that describes records in these files:
                  15 TRANSACTION-COMMENT      PIC X(9).
 
 }}}
-As you can see such a structure would be pretty tricky to handle in PDI without LegStar's help.
+Transforming a record conforming to this COBOL structure into an Excel worksheet row is not straightforward without LegStar's help. Here are some characteristics of the structure which are common in COBOL:
 
-In this document, we will be using sample [http://www.legsem.com/legstar/legstar-coxbgen/index.html LegStar Transformers] that were generated for this COBOL structure. These Transformer samples are bundled with the LegStar for PDI distribution.
+ * The structure is a 4 levels deep hierarchy that needs to be flatten to fit in a row
+ * The content of the CUSTOMER-NAME character string is in EBCDIC
+ * TRANSACTION-NBR is an integer in Big endian byte ordering
+ * TRANSACTION is a variable size array which size is given by TRANSACTION-NBR
+ * TRANSACTION-DATE is being redefined by an, anonymous, FILLER structure
+ * TRANSACTION-AMOUNT is a compressed numeric
+
+It is now time to create our PDI transformation.
 
 = Create a PDI Transformation =
 
@@ -62,27 +71,9 @@ http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-setupinitial-scr.pn
 
 You can change the step name if you like.
 
-The COBOL-annotated JAXB classes are LegStar Transformer classes for the COBOL copybook that describes the mainframe file records. If you click on the browse button next to this field, you will get a list of such classes.
+== Locate the z/OS input file ==
 
-The classes that you see listed are the samples that were intalled. Later, when you generate your own LegStar Transformers, they will appear in this list provided you package your Transformers as jar files and deploy them to *$KETTLE_DIR/plugins/steps/legstar.pdi.zosfile/lib*.
-
-http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-selectjaxbclass-scr.png
-
-In our case, we select CustomerData which corresponds to the CUSTOMER-DATA COBOL structure.
-
-Back from this dialog, you will notice that a list of fields was automatically populated. Each field corresponds to an elementary data item from the corresponding COBOL structure:
-
-http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-showfields-scr.png
-
-LegStar for PDI makes a number of inferences based on the COBOL data item types and the PDI constraints. One important PDI constraint is that data must fit the row model (in the sense of a table row) in order to move from step to step. Hierarchical structures, such as COBOL structures, have therefore to be flattened, arrays are not directly supported, etc.
-
-The next parameter we will be setting is the host character set. The default IBM01140 character set is for US english EBCDIC. Your own mainframe might be setup for a different EBCDIC character set such as IBM1147 for France:
-
-http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-hostcharset-scr.png
-
-The character sets listed are taken directly from your java VM. If you don't see any IBMxxx character sets listed, you need to get a JDK or an international version of the JRE.
-
-We now need to tell the step where the z/OS file resides. You can use the browse button to locate the files you downloaded in the preliminary step.
+We need to tell the step where the z/OS file resides. You can use the browse button to locate the files you downloaded in the preliminary step.
 
 You must also check the "Variable Length" option.
 
@@ -90,19 +81,69 @@ You have 2 sample files. One where records start with a 4 bytes record descripto
 
 http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-filelocation-scr.png
 
-At this stage, it is a good idea to click the preview button. This should popup this dialog:
+The next parameter we will be setting is the host character set. The default IBM01140 character set is for US English EBCDIC. Your own mainframe might be setup for a different EBCDIC character set such as IBM1147 for France:
+
+http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-hostcharset-scr.png
+
+The character sets listed are taken directly from your java VM. If you don't see any IBMxxx character sets listed, you need to get a JDK or an international version of the JRE.
+
+== Specify the COBOL structure that describes records ==
+
+Select the COBOL tab on the setup dialog:
+
+http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-cobolinputtype-scr.png
+
+Here we will select the COBOL structure that describes the z/OS file records.
+
+The *Import COBOL* button allows you to pick up COBOL source code from you file system.
+
+Alternatively, you can copy/paste the code. Just select all the lines from the COBOL structure we saw previously and paste it to the text box.
+
+By default, COBOL code is assumed to be fixed format which means it should start after column 7 and not extend past column 72. We will see later how you can customize legstar-pdi to accept free format COBOL.
+
+Your screen should now look like this:
+
+http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-copypasteresult-scr.png
+
+== Get the PDI fields ==
+
+Select the last tab called Fields from the setup dialog. It should be empty at this stage:
+
+http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-getfields-scr.png
+
+You will need to click on the *Get Fields* button to populate the list.
+
+There is quite a bit of processing that goes on the infer a list of PDI fields from the COBOL code that was previously specified.
+
+A progress dialog, that you can cancel at any time, should appear while the background process is going on:
+
+http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-progressdialog-scr.png
+
+Back from this dialog, you will notice that the fields list is now populated. Each field corresponds to an elementary data item from the corresponding COBOL structure:
+
+http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-showfields-scr.png
+
+LegStar for PDI makes a number of inferences based on the COBOL data item types and the PDI constraints. One important PDI constraint is that data must fit the row model (in the sense of a table row) in order to move from step to step. Hierarchical structures, such as COBOL structures, have therefore to be flattened, arrays are not directly supported, etc.
+
+== Preview ==
+
+Once fields are generated, the setup is complete.
+
+f you now click on the *Preview* button, this dialog should popup:
 
 http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-previewsize-scr.png
 
-Once you select the number of lines you would like to see, you should get your first glimpse at the transformed mainframe data:
+Once you select the number of lines you would like to see and click on *OK*, you should get your first glimpse at the transformed mainframe data:
 
 http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-previewresult-scr.png
 
-It is now time to turn to the Excel Output step where we need to decide the location of the output Excel worksheet:
+== Setup the Excel step and save ==
+
+It is now time to turn to the Excel Output step. If you double-click on the step, the only parameter you need to set is the location of the output Excel worksheet:
 
 http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-exceloutput-scr.png
 
-Probably a good time to save the PDI transformation.
+Probably a good time to save the PDI transformation. You can give it whatever name you like and store it on your file system as a .ktr file or in a PDI repository.
 
 = Run the PDI transformation =
 
@@ -118,23 +159,72 @@ Finally, if you open the excel worksheet that you produced, you should get somet
 
 http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-excelworksheet-scr.png
 
+At this stage you have a working example of a transformation that takes raw binary mainframe data as input and turns it into an excel worksheet.
 
 = Additional info for the curious =
 
+== Customizing the COBOL Tranformer generation ==
+
+When you clicked on the *Get Fields* button, the LegStar COBOL Transformer generator was launched.
+
+There are a number of parameters that you can set in a file called cob2trans.properties located in folder $KETTLE_DIR/plugins/steps/legstar.pdi.zosfile/conf. These parameters influence the generator behavior.
+
+We won't discuss all these options here but if your COBOL code is free format (meaning it does not start at column 8), you will need to set:
+{{{
+codeFormat = FREE_FORMAT
+}}}
+
+You need to do this before you click on *Get Fields* of course.
+
 == How the sample z/OS files were created ==
 
-These files were created on z/OS using a COBOL batch program called [http://code.google.com/p/legstar-pdi/source/browse/trunk/legstar.pdi.sample.tcobwvb/src/main/cobol/TCOBWVB.cbl TCOBWVB].
+These files were created on z/OS using a COBOL batch program called [http://code.google.com/p/legstar-pdi/source/browse/trunk/legstar.pdi.zosfile/src/main/cobol/PCUSTWVB.cbl PCUSTWVB].
 
 The JCL used to produce the sequential file looks like this:
 {{{
-//RUN  EXEC PGM=TCOBWVB,REGION=1024K
+//P390RWVB   JOB  (ACCT#),'FADY',
+//           MSGCLASS=X,NOTIFY=&SYSUID,PRTY=14,REGION=0M
+//*********************************************************************
+//RUN  EXEC PGM=PCUSTWVB,REGION=1024K,PARM='000010000'
 //STEPLIB  DD DSN=P390.DEV.LOAD,DISP=SHR
 //SYSPRINT DD SYSOUT=*
-//OUTFILE  DD DISP=(MOD,CATLG,DELETE),DSN=P390.DEV.TCOBWVB,
+//OUTFILE  DD DISP=(MOD,CATLG,DELETE),DSN=P390.DEV.FCUSTDAT,
 //           SPACE=(TRK,(45,15)),UNIT=3390,
 //           DCB=(BLKSIZE=374,LRECL=187,RECFM=VB)
 }}}
 
-The ZOS.TCOBWVB.bin file was received with a simple FTP in binary mode.
+The ZOS.FCUSTDAT.bin file was received with a simple FTP in binary mode with the following command:
+{{{
+ftp> bin
+200 Representation type is Image
+ftp> get DEV.FCUSTDAT ZOS.FCUSTDAT.bin
+200 Port request OK.
+125 Sending data set P390.DEV.FCUSTDAT
+250 Transfer completed successfully.
+}}}
 
-The second one, ZOS.TCOBWVB.RDW.bin was also obtained using FTP but the special FTP command: *quote SITE RDW* was issued before the binary receive. This command preserves the Record Descriptor Words (RDW) which is a 4 bytes header that z/OS prepends to variable records. The RDW contains the record actual length.
+The second one, ZOS.FCUSTDAT.RDW.bin was also obtained using FTP but a special z/OS FTP command *site RDW* that preserves the Record Descriptor Words. The RDW is a 4 bytes header that z/OS prepends to variable records. The RDW contains the record actual length:
+{{{
+ftp> bin
+200 Representation type is Image
+ftp> quote site RDW
+200 SITE command was accepted
+ftp> get DEV.FCUSTDAT ZOS.FCUSTDAT.RDW.bin
+200 Port request OK.
+125 Sending data set P390.DEV.FCUSTDAT
+250 Transfer completed successfully.
+}}}
+
+== What is the COBOL-annotated JAXB class option used for ==
+
+You might have noticed on the z/OS File Input setup dialog, on the COBOL tab, that there was an alternative option to COBOL source.
+
+This is useful if you are already a LegStar user and might have some COBOL Transformers you created with LegStar, outside the PDI designer, but you wish to use with PDI.
+
+If you have LegStar COBOL Transformers created outside PDI, just package them in a jar archive and drop the archive in $KETTLE_DIR/plugins/steps/legstar.pdi.zosfile/lib.
+
+Then when you setup the z/OS File input step in the PDI designer, select the *COBOL-annotated JAXB class* option on the COBOL tab rather than importing COBOL source code.
+
+You are then presented with a list of JAXB classes with COBOL annotations produced by LegStar. You can pick up the one that describes your z/OS file record and then click on "Get Fields" to populate the PDI fields tab.
+
+
