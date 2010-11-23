@@ -99,7 +99,7 @@ The *Import COBOL* button allows you to pick up COBOL source code from you file 
 
 Alternatively, you can copy/paste the code. Just select all the lines from the [#Preliminary_task COBOL structure we saw previously] and paste them to the text box.
 
-By default, COBOL code is assumed to be fixed format which means it should start after column 7 and not extend past column 72. We will see later how you can customize legstar-pdi to accept free format COBOL.
+By default, COBOL code is assumed to be fixed format which means it should start after column 7 and not extend past column 72. We will see later how you can [#Customizing_the_COBOL_Tranformer_generation customize legstar-pdi] to accept free format COBOL.
 
 Your screen should now look like this:
 
