@@ -17,7 +17,7 @@ These file records are variable length.
 
 The content of these 2 files is almost identical. The only difference is that the one with suffix RDW contains record descriptor words, while the other one doesn't. Processing variable record files with RDW is faster but LegStar can handle both types.
 
-See [Introduction] for information on how these files were produced. Observe that there are no conversions performed on the mainframe. These files are binary images of mainframe files, obtained via FTP.
+See [Introduction toto] for information on how these files were produced. Observe that there are no conversions performed on the mainframe. These files are binary images of mainframe files, obtained via FTP.
 
 This is the COBOL structure that describes records in these files:
 {{{
