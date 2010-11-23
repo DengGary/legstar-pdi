@@ -176,7 +176,7 @@ codeFormat = FREE_FORMAT
 
 You need to do this before you click on *Get Fields* of course.
 
-== How the sample z/OS files were created ==
+==How the sample z/OS files were created==
 
 These files were created on z/OS using a COBOL batch program called [http://code.google.com/p/legstar-pdi/source/browse/trunk/legstar.pdi.zosfile/src/main/cobol/PCUSTWVB.cbl PCUSTWVB].
 
