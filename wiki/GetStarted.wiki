@@ -5,7 +5,7 @@
 
 This document guides you through the process of creating a PDI Transformation with 2 steps:
 
- * The *z/OS File Input* step which will read raw binary data from a file received from a mainframe
+ * The LegStar *z/OS File Input* step which will read raw binary data from a file received from a mainframe
 
  * The *Excel Output* step which will create an excel worksheet with the transformed data
 
@@ -42,7 +42,7 @@ This is the COBOL structure that describes records in these files:
                  15 TRANSACTION-COMMENT      PIC X(9).
 
 }}}
-Transforming a record conforming to this COBOL structure into an Excel worksheet row is not straightforward without LegStar's help. Here are some characteristics of the structure which are common in COBOL:
+Transforming a record conforming to this COBOL structure into an Excel worksheet row is not straightforward without LegStar's help. Here are some characteristics of this structure which are common in COBOL:
 
  * The structure is a 4 levels deep hierarchy that needs to be flatten to fit in a row
  * The content of the CUSTOMER-NAME character string is in EBCDIC
@@ -51,7 +51,7 @@ Transforming a record conforming to this COBOL structure into an Excel worksheet
  * TRANSACTION-DATE is being redefined by an, anonymous, FILLER structure
  * TRANSACTION-AMOUNT is a compressed numeric
 
-It is now time to create our PDI transformation.
+So let's see how LegStar for PDI deals with such a structure and let's start creating our PDI transformation.
 
 = Create a PDI Transformation =
 
@@ -87,6 +87,8 @@ http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-hostcharset-scr.png
 
 The character sets listed are taken directly from your java VM. If you don't see any IBMxxx character sets listed, you need to get a JDK or an international version of the JRE.
 
+In the case of the files you downloaded, the character set is IBM01140 so you can keep the default. 
+
 == Specify the COBOL structure that describes records ==
 
 Select the COBOL tab on the setup dialog:
@@ -119,7 +121,7 @@ A progress dialog, that you can cancel at any time, should appear while the back
 
 http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-progressdialog-scr.png
 
-Back from this dialog, you will notice that the fields list is now populated. Each field corresponds to an elementary data item from the corresponding COBOL structure:
+Back from this dialog, you will notice that the fields list is now populated. Each field maps to an elementary data item from the corresponding COBOL structure:
 
 http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-showfields-scr.png
 
@@ -129,7 +131,7 @@ LegStar for PDI makes a number of inferences based on the COBOL data item types 
 
 Once fields are generated, the setup is complete.
 
-f you now click on the *Preview* button, this dialog should popup:
+You can now click on the *Preview* button, this dialog should popup:
 
 http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-previewsize-scr.png
 
@@ -165,16 +167,20 @@ At this stage you have a working example of a transformation that takes raw bina
 
 == Customizing the COBOL Tranformer generation ==
 
-When you clicked on the *Get Fields* button, the LegStar COBOL Transformer generator was launched.
+When you clicked on the *Get Fields* button, the LegStar COBOL Transformer generator was launched in the background.
 
-There are a number of parameters that you can set in a file called cob2trans.properties located in folder $KETTLE_DIR/plugins/steps/legstar.pdi.zosfile/conf. These parameters influence the generator behavior.
+This generator takes the COBOL source you provided and generates java code which will be able to transform raw z/OS records to java objects. Internally, LegStar refers to these generated classes as COBOL Transformers.
 
-We won't discuss all these options here but if your COBOL code is free format (meaning it does not start at column 8), you will need to set:
+The COBOL Transformers are based on [http://www.oracle.com/technetwork/articles/javase/index-140168.html JAXB], a standard java technology. LegStar adds COBOL annotations to the standard JAXB classes.
+
+There are a number of parameters that you can set to change the behavior of the LegStar COBOL Transformers generator. These parameters values come from a file called cob2trans.properties located in folder $KETTLE_DIR/plugins/legstar.pdi.zosfile/conf.
+
+We won't discuss all these options here but there is at least one important parameter you might have to set: if your COBOL code is free format (meaning it does not start at column 8), you will need to set:
 {{{
 codeFormat = FREE_FORMAT
 }}}
 
-You need to do this before you click on *Get Fields* of course.
+You need to do this before you click on the *Get Fields* button. If you don't change that parameter, LegStar will ignore anything starting before column 8.
 
 ==How the sample z/OS files were created==
 
@@ -217,11 +223,11 @@ ftp> get DEV.FCUSTDAT ZOS.FCUSTDAT.RDW.bin
 
 == What is the COBOL-annotated JAXB class option used for ==
 
-You might have noticed on the z/OS File Input setup dialog, on the COBOL tab, that there was an alternative option to COBOL source.
+You might have noticed on the [#Specify_the_COBOL_structure_that_describes_records z/OS File Input setup dialog], on the COBOL tab, that there was an alternative option to COBOL source.
 
-This is useful if you are already a LegStar user and might have some COBOL Transformers you created with LegStar, outside the PDI designer, but you wish to use with PDI.
+This is useful if you are already a LegStar user and might have some COBOL Transformers you created with LegStar, outside the PDI designer, that you wish to use with PDI.
 
-If you have LegStar COBOL Transformers created outside PDI, just package them in a jar archive and drop the archive in $KETTLE_DIR/plugins/steps/legstar.pdi.zosfile/lib.
+If you have LegStar COBOL Transformers created outside PDI, just package them in a jar archive and drop the archive in $KETTLE_DIR/plugins/legstar.pdi.zosfile/user.
 
 Then when you setup the z/OS File input step in the PDI designer, select the *COBOL-annotated JAXB class* option on the COBOL tab rather than importing COBOL source code.
 
