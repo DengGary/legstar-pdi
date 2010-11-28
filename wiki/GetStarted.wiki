@@ -115,7 +115,7 @@ http://legstar-pdi.googlecode.com/svn/wiki/images/getstarted-getfields-scr.png
 
 You will need to click on the *Get Fields* button to populate the list.
 
-There is quite a bit of processing that goes on the infer a list of PDI fields from the COBOL code that was previously specified.
+There is quite a bit of processing that goes on to infer a list of PDI fields from the COBOL code that was previously specified.
 
 A progress dialog, that you can cancel at any time, should appear while the background process is going on:
 
