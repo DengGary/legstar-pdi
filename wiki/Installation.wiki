@@ -27,5 +27,5 @@ Create a new PDI Transformation. You should now have a Design tab with all the a
 
 Open the Input category and drag/drop the *z/OS File Input* step onto the canvas.
 
-Congratulations, LegStar for PDI is now installed. You can now start building our [GetStarted first transformation].
+Congratulations, LegStar for PDI is now installed. You can now start building your [GetStarted first transformation].
 
