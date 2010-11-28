@@ -17,7 +17,7 @@ For the rest of this document, we refer to the folder where you installed PDI as
 
 Download the latest LegStar for PDI release from [http://code.google.com/p/legstar-pdi/downloads this link].
 
-Unzip the archive to $KETTLE_DIR/plugins/steps. This should create a folder named *legstar.pdi.zosfile* under $KETTLE_DIR/plugins/steps.
+Unzip the archive to $KETTLE_DIR/plugins. This should create a folder named *legstar.pdi.zosfile* under $KETTLE_DIR/plugins.
 
 = Check =
 
@@ -27,5 +27,5 @@ Create a new PDI Transformation. You should now have a Design tab with all the a
 
 Open the Input category and drag/drop the *z/OS File Input* step onto the canvas.
 
-Congratulations, LegStar for PDI is now installed.
+Congratulations, LegStar for PDI is now installed. You can now start building our [GetStarted first transformation].
 
