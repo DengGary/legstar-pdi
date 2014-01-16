@@ -1,13 +1,5 @@
 #download legstar-pdi
 
-= Introduction =
+= Available downloads =
 
-There Downloads page on Google code is no longer functional 
-
-
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+* [https://googledrive.com/host/0B0Jhkz53SgUXTElZSHh4NUM2Tm8/legstar.pdi.zosfile-0.6.zip Release 0.6] Jan 16, 2014
