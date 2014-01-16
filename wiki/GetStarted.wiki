@@ -15,7 +15,7 @@ Get the mainframe binary file samples from [http://legstar-pdi.googlecode.com/sv
 
 These file records are variable length.
 
-The content of these 2 files is almost identical. The only difference is that the one with suffix RDW contains record descriptor words, while the other one doesn't. Processing variable record files with RDW is faster but LegStar can handle both types.
+The content of these 2 files is almost identical. The only difference is that the one with suffix RDW contains record descriptor words, while the other one does not. Processing variable record files with RDW is faster but LegStar can handle both types.
 
 See [#How_the_sample_z/OS_files_were_created How the sample z/OS files were created] for information on how these files were produced. Observe that there are no conversions performed on the mainframe. These files are binary images of mainframe files, obtained via FTP.
 
@@ -55,9 +55,9 @@ So let's see how LegStar for PDI deals with such a structure and let's start cre
 
 = Create a PDI Transformation =
 
-Start or restart the PDI spoon UI ($KETTLE_DIR/spoon.sh or %KETTLE_DIR%/spoon.bat).
+Start or restart the PDI spoon UI ($KETTLE_DIR/spoon.sh or %KETTLE_DIR%/Spoon.bat).
 
-Drag/Drop the *z/OS File Input* step from the Input category and the *Excel Output* step from the Output category onto the canvas.
+Drag/Drop the *z/OS File Input* step from the Input category and the *Microsoft Excel Output* step from the Output category onto the canvas.
 
 Create a hop between these steps. You should now have a screen looking like this:
 
@@ -199,7 +199,7 @@ The JCL used to produce the sequential file looks like this:
 //           DCB=(BLKSIZE=374,LRECL=187,RECFM=VB)
 }}}
 
-The ZOS.FCUSTDAT.bin file was received with a simple FTP in binary mode with the following command:
+The ZOS.FCUSTDAT.bin file was received from the mainframe with a simple FTP in binary mode with the following command:
 {{{
 ftp> bin
 200 Representation type is Image
