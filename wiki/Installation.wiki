@@ -3,25 +3,23 @@
 
 = Pre-requisites =
 
-Before you install LegStar for PDI, make sure you are running with a [http://www.oracle.com/technetwork/java/javase/downloads/index.html JDK].
+LegStar for PDI requires [http://sourceforge.net/projects/pentaho/files/Data%20Integration/ PDI version 5.0.1] or later release.
 
-To make sure, run command: _javac -version_ from a command prompt. You should get something similar to: _javac 1.6.0_16_.
+= Get from Marketplace =
 
-LegStar for PDI requires JDK 1.5 or above.
-
-LegStar for PDI requires [http://sourceforge.net/projects/pentaho/files/Data%20Integration/ PDI version 4.0.1] or later release.
-
-For the rest of this document, we refer to the folder where you installed PDI as $KETTLE_DIR.
+On the PDI Spoon interface select Help -> Marketplace then pick up the legstar.pdi.zosfile plugin.
 
 = Download/Unzip =
 
-Download the latest LegStar for PDI release from [http://code.google.com/p/legstar-pdi/downloads this link].
+Alternatively, you can download the latest LegStar for PDI release from [Downloads this link].
 
-Unzip the archive to $KETTLE_DIR/plugins. This should create a folder named *legstar.pdi.zosfile* under $KETTLE_DIR/plugins.
+For the rest of this document, we refer to the folder where you installed PDI as $KETTLE_DIR.
+
+Unzip the archive you downloaded to $KETTLE_DIR/plugins. This should create a folder named *legstar.pdi.zosfile* under $KETTLE_DIR/plugins.
 
 = Check =
 
-Start or restart the PDI spoon UI ($KETTLE_DIR/spoon.sh or %KETTLE_DIR%/spoon.bat).
+Start or restart the PDI spoon UI ($KETTLE_DIR/spoon.sh or %KETTLE_DIR%/Spoon.bat).
 
 Create a new PDI Transformation. You should now have a Design tab with all the available steps.
 
