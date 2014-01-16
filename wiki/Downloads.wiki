@@ -1,4 +1,5 @@
-#download legstar-pdi
+#summary download legstar-pdi
+#labels Featured,Phase-Support
 
 = Available downloads =
 
